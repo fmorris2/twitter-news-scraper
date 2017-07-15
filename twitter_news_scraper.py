@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from flask import Flask
+from flask import Flask, jsonify
 
-app = Flask(__name__)
+app = Flask('twitter_news_scraper')
 
 
 @app.route('/')
