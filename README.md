@@ -18,6 +18,15 @@ A RESTful web service which scrapes trending topics from Twitter, compiles a col
     - If criteria is invalid, returns HTTP status code 400 (Bad Request)
     - If criteria is valid, backend parses [trends24](https://trends24.in) for the specific criteria
 3. Backend finds appropriate news story for each trending topic 
+    - Coming soon
+4. Backend compiles information for each news story
+    - URL
+    - Title
+    - Short description
+    - Trending topic
+5. Backend returns collection of news story information
+    - Format: JSON
+    - Status code: 200 (OK)
 
 ### Usage
 Coming soon
