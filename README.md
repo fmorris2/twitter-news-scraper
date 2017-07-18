@@ -12,10 +12,10 @@ A RESTful web service which scrapes trending topics from Twitter, compiles a col
         - If no location is provided, service will default to worldwide
 2. Backend collects trending topics for provided criteria
     - If criteria is invalid, returns HTTP status code 400 (Bad Request)
-    - If criteria is valid, backend consumes Twitter API to gather trending topics for the specified criteria.
+    - If criteria is valid, backend consumes Twitter API to gather trending topics for the specified criteria
         - The backend will take the location parameter provided, and will pass it to the Yahoo geoplanet API in order to retrieve the WOEID (where on earth id) that will be passed to the Twitter API 
 3. Backend finds appropriate news story for each trending topic
-    - Coming soon
+    - The Google News API appears to be deprecated since 2011, and I could not find any viable alternative on my first search. Therefore the backend will request news.google.com and parse the HTML itself
 4. Backend compiles information for each news story
     - URL
     - Title
