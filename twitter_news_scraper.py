@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 from backend import RequestParser
 
 app = Flask('twitter_news_scraper')
-requestParser = RequestParser()
+requestParser = RequestParser.RequestParser()
 
 @app.route('/')
 def test():

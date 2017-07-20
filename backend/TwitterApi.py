@@ -1,2 +1,2 @@
 def getTrendingTopics(woeid):
-    return None
+    return []

@@ -1,5 +1,8 @@
 from flask import jsonify
 from backend.types import CachedTopicInfo
+from backend.YahooGeoPlanetApi import getWoeidForLoc
+from backend.TwitterApi import getTrendingTopics
+from backend.NewsCollector import getNewsForTopics
 
 class RequestParser:
     """Used to handle HTTP requests for
@@ -15,7 +18,9 @@ class RequestParser:
     def __init__(self):
         self.cache = {} #initialize empty dictionary for cache
 
-    #Grabs a json representation of the trending news for a location
+    """
+        Grabs a json representation of the trending news for a location
+    """
     def getNewsForLoc(self, location):
         #first, check cache
         if location in self.cache and self.cache[location].isValid():
@@ -31,26 +36,16 @@ class RequestParser:
     """
     def parseAndCache(self, location):
         #first, convert location to a WOEID
-        woeid = None
+        woeid = getWoeidForLoc(location);
 
         #second, query Twitter API for top 50 trending topics for the WOEID
-        topics = []
+        topics = getTrendingTopics(woeid)
 
         #third, parse news stories from the web for each of the topics
-        news = []
+        news = getNewsForTopics(topics)
 
         #fourth, create a cache entry with the generated news stories
-        self.cache[location] = CachedTopicInfo(news)
+        self.cache[location] = CachedTopicInfo.CachedTopicInfo(news)
 
         ##return JSON representation of news stories
         return jsonify(newsEntries = news)
-
-
-    """
-        Takes a list of topics (Strings), and creates a
-        list of NewsEntry objects associated with them.
-        
-        Returns a list of NewsEntry objects
-    """
-    def grabNewsForTopics(topics):
-        return None
