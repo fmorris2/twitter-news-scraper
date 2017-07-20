@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 from flask import Flask, jsonify
-from backend.RequestParser import getNewsForLoc
+from backend import RequestParser
 
 app = Flask('twitter_news_scraper')
-
+requestParser = RequestParser()
 
 @app.route('/')
 def test():
@@ -12,7 +12,7 @@ def test():
 
 @app.route('/news/<location>')
 def scrape(location):
-    return getNewsForLoc(location)
+    return requestParser.getNewsForLoc(location)
 
 
 if __name__ == '__main__':
