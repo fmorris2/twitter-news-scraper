@@ -1,9 +1,8 @@
 import urllib2
 import xml.etree.ElementTree as ET
 
-APPLICATION_ID = 's4Iywt34'
-# TODO DON'T HARDCODE IN SPACE CHARACTERS.... PASS TO URL_ENCODE METHOD INSTEAD WITH NORMAL SPACES
-QUERY_BASE = 'http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20geo.places%20where%20text%20=%27'
+SAFE_URL_PARAMS = "%/:=&?~#+!$,;'@()*[]"
+QUERY_BASE = 'http://query.yahooapis.com/v1/public/yql?q=select * from geo.places where text =\''
 
 """
     Handles the logic flow for grabbing
@@ -63,6 +62,5 @@ def parseWoeidFromXml(xml):
 """
     Build a safe url from the query base & location
 """
-# TODO BUILD SAFE URL WITH URL_ENCODE
 def buildUrl(location):
-    return QUERY_BASE + location+"*%27"
+    return urllib2.quote(QUERY_BASE + location+"*'", SAFE_URL_PARAMS)

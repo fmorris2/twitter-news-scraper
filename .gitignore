@@ -2,3 +2,4 @@ LICENSE
 README.md
 .idea/
 *.pyc
+data/twitter_api_keys
