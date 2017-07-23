@@ -6,12 +6,14 @@ class CachedTopicInfo:
 
     Attributes:
         timeCached (the time that this cache entry was last updated)
+        coordinates (tuple containing latitude and longitude for location)
         newsEntries (list of news entries associated with topics)
     """
     CACHE_TIME = 60 * 5 #5 minutes represented in seconds
 
-    def __init__(self, newsEntries):
+    def __init__(self, coordinates, newsEntries):
         self.timeCached = time.time()
+        self.coordinates = coordinates
         self.newsEntries = newsEntries
 
     """returns whether or not the cache entry is valid

@@ -6,17 +6,18 @@ QUERY_BASE = 'http://query.yahooapis.com/v1/public/yql?q=select * from geo.place
 
 """
     Handles the logic flow for grabbing
-    a WOEID for a specific location
+    the latitude and longitude for a specific location
     
     This method simply goes through the
     necessary steps, calls helper methods
     for all of the hard work, and provides
     some safety with null checks along the way
     
-    returns the WOEID for the location, or None
+    returns a tuple containing the latitude
+    and longitude for the location, or None
     if the parsing process failed
 """
-def getWoeidForLoc(location):
+def getCoordsForLoc(location):
     #first, build the url we'll query for the given location
     url = buildUrl(location)
 
@@ -27,15 +28,15 @@ def getWoeidForLoc(location):
         print 'Error parsing XML for ' + location
         return None
 
-    #third, parse the WOEID from the XML
-    woeid = parseWoeidFromXml(xml)
-    #null check to make sure we parsed the woeid successfully
-    if woeid is None:
-        print 'Error parsing WOEID from XML'
+    #third, parse the lat & long from the XML
+    coords = parseCoordsFromXml(xml)
+    #null check to make sure we parsed the coords successfully
+    if coords is None:
+        print 'Error parsing coords from XML'
         return None
 
-    #SUCCESS, return the woeid for the given location
-    return woeid
+    #SUCCESS, return the coords for the given location
+    return coords
 
 """
     Parses XML from the Yahoo API endpoint
@@ -52,12 +53,16 @@ def parseXmlFromUrl(url):
 """
     Given an XML element representing the root of
     the API response, we will parse it and find the
-    WOEID from within it
+    lat & longitude from within it
     
-    return the WOEID, as as string
+    return the coords, as a tuple
 """
-def parseWoeidFromXml(xml):
-    return xml[0][0][0].text
+def parseCoordsFromXml(xml):
+    loc = xml[0][0]
+    for child in loc:
+        if 'centroid' in child.tag:
+            return (child[0].text, child[1].text)
+    return (None, None)
 
 """
     Build a safe url from the query base & location
