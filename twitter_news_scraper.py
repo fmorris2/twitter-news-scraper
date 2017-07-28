@@ -15,7 +15,7 @@ def test():
 
 @app.route('/news/<location>')
 def scrape(location):
-    return requestParser.getNewsForLoc(location)
+    return requestParser.get_news_for_loc(location)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(threaded=True)

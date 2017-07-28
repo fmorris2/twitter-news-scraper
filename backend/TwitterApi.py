@@ -25,9 +25,12 @@ class TwitterApi:
     ROOT_PATH = ''
     BASE64_BEARER_TOKEN_CREDENTIALS = ''
 
+    #Maximum # of topics we'll gather news for
+    MAX_TOPICS = 50
+
     def __init__(self):
-        self.readKeys()
-        self.setBearerTokenCredentials()
+        self.read_keys()
+        self.set_bearer_token_credentials()
 
     """
         Grab trending topics for a specific location,
@@ -37,15 +40,14 @@ class TwitterApi:
         a different endpoint on the Twitter API to obtain the trending
         topics related to the WOEID.
     """
-    def getTrendingTopics(self, coords):
+    def get_trending_topics(self, coords):
         #obtain WOEID for coords
-        woeid = self.obtainWoeid(coords)
+        woeid = self.obtain_woeid(coords)
         if woeid == -1:
             return []
 
         #obtain trending topics for the WOEID
-        topics = self.obtainTopics(woeid)
-        print 'Topics: ' + str(topics)
+        topics = self.obtain_topics(woeid)
         return topics
 
     """
@@ -53,8 +55,8 @@ class TwitterApi:
         closest to the supplied coordinate
         pair
     """
-    def obtainWoeid(self, coords):
-        token = self.obtainBearerToken()
+    def obtain_woeid(self, coords):
+        token = self.obtain_bearer_token()
         if token is None:
             return -1
 
@@ -73,7 +75,7 @@ class TwitterApi:
         Obtains a bearer token to access the Twitter-API
         with
     """
-    def obtainBearerToken(self):
+    def obtain_bearer_token(self):
         headers = {
             'Authorization':'Basic ' + self.BASE64_BEARER_TOKEN_CREDENTIALS,
             'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8.'
@@ -92,8 +94,8 @@ class TwitterApi:
         them by tweet-volume (high to low), and
         return them in a list
     """
-    def obtainTopics(self, woeid):
-        token = self.obtainBearerToken()
+    def obtain_topics(self, woeid):
+        token = self.obtain_bearer_token()
         if token is None:
             return []
 
@@ -108,6 +110,8 @@ class TwitterApi:
         if 'errors' not in json:
             trends = json[0]['trends']
             for trend in trends:
+                if(len(topics) == self.MAX_TOPICS):
+                    break
                 topics.append((trend['name'], trend['tweet_volume']))
 
         #sort topics by tweet volume
@@ -122,7 +126,7 @@ class TwitterApi:
         2.) Concatenate the two RFC1738 encoded keys with a colon ":"
         3.) Base64 encode the concatenated string
     """
-    def setBearerTokenCredentials(self):
+    def set_bearer_token_credentials(self):
         consumer = self.rfc1738encode(self.CONSUMER_KEY)
         secret = self.rfc1738encode(self.SECRET_KEY)
         concatenated = consumer + ":" + secret
@@ -139,7 +143,7 @@ class TwitterApi:
         Reads the Twitter API keys from the
         file twitter_api_keys in the data directory
     """
-    def readKeys(self):
+    def read_keys(self):
         lines = open(self.ROOT_PATH + self.KEY_FILE_PATH).read().splitlines()
         self.CONSUMER_KEY = lines[0]
         self.SECRET_KEY = lines[1]

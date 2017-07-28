@@ -9,7 +9,7 @@ class CachedTopicInfo:
         coordinates (tuple containing latitude and longitude for location)
         newsEntries (list of news entries associated with topics)
     """
-    CACHE_TIME = 60 * 5 #5 minutes represented in seconds
+    CACHE_TIME = 60 * 120 #120 minutes represented in seconds
 
     def __init__(self, coordinates, newsEntries):
         self.timeCached = time.time()

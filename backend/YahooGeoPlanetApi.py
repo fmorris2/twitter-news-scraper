@@ -1,7 +1,7 @@
 import urllib2
 import xml.etree.ElementTree as ET
 
-SAFE_URL_PARAMS = "%/:=&?~#+!$,;'@()*[]"
+SAFE_URL_PARAMS = "%/:=&?~+!$,;'@()*[]"
 QUERY_BASE = 'http://query.yahooapis.com/v1/public/yql?q=select * from geo.places where text =\''
 
 """
@@ -17,19 +17,19 @@ QUERY_BASE = 'http://query.yahooapis.com/v1/public/yql?q=select * from geo.place
     and longitude for the location, or None
     if the parsing process failed
 """
-def getCoordsForLoc(location):
+def get_coords_for_loc(location):
     #first, build the url we'll query for the given location
-    url = buildUrl(location)
+    url = build_url(location)
 
     #second, query the url and parse the XML doc from it
-    xml = parseXmlFromUrl(url)
+    xml = parse_xml_from_url(url)
     #little null check to make sure we connected & parsed successfully
     if xml is None:
         print 'Error parsing XML for ' + location
         return None
 
     #third, parse the lat & long from the XML
-    coords = parseCoordsFromXml(xml)
+    coords = parse_coords_from_xml(xml)
     #null check to make sure we parsed the coords successfully
     if coords is None:
         print 'Error parsing coords from XML'
@@ -42,7 +42,7 @@ def getCoordsForLoc(location):
     Parses XML from the Yahoo API endpoint
     returns the root element from the ElementTree API for parsing XML
 """
-def parseXmlFromUrl(url):
+def parse_xml_from_url(url):
     #setup the url request
     response = urllib2.urlopen(url)
     #read the doc and store it in a file
@@ -57,7 +57,8 @@ def parseXmlFromUrl(url):
     
     return the coords, as a tuple
 """
-def parseCoordsFromXml(xml):
+def parse_coords_from_xml(xml):
+    #TODO eventually improve this method of parsing.... Not very good
     loc = xml[0][0]
     for child in loc:
         if 'centroid' in child.tag:
@@ -67,5 +68,6 @@ def parseCoordsFromXml(xml):
 """
     Build a safe url from the query base & location
 """
-def buildUrl(location):
-    return urllib2.quote(QUERY_BASE + location+"*'", SAFE_URL_PARAMS)
+def build_url(location):
+    utf8 = (QUERY_BASE + location+"*'").encode('utf8')
+    return urllib2.quote(utf8, SAFE_URL_PARAMS)
