@@ -54,10 +54,14 @@ class NewsCollector:
         print 'Starting to parse news link for [' + url + ']'
         newsLink = None
         # send a GET request to the news.google URL and save the page as a file
-        resp = urllib2.urlopen(url)
-        html = resp.read()
-        xml = ET.fromstring(html)
-        return self.parse_news_from_xml(xml[0])
+        try:
+            resp = urllib2.urlopen(url)
+            html = resp.read()
+            xml = ET.fromstring(html)
+            return self.parse_news_from_xml(xml[0])
+        except urllib2.URLError:
+            return None
+
 
     def parse_news_from_xml(self, xml):
         if xml is None:

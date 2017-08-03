@@ -18,4 +18,4 @@ def scrape(location):
     return requestParser.get_news_for_loc(location)
 
 if __name__ == '__main__':
-    app.run(threaded=True)
+    app.run(host='0.0.0.0',threaded=True)
