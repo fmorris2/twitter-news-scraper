@@ -3,8 +3,9 @@ A RESTful web service which scrapes trending topics from Twitter, compiles a col
 
 ### Architecture
 - Language: [Python](https://www.python.org/)
-- Frameworks:
+- Libraries:
     - [Flask](http://flask.pocoo.org/)
+    - [Requests](http://docs.python-requests.org/en/master/)
 
 ### Basic Logic Flow
 1. User accesses API endpoint wth GET request
