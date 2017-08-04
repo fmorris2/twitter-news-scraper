@@ -1,4 +1,6 @@
 import urllib2
+import Queue
+import threading
 import xml.etree.ElementTree as ET
 
 from YahooGeoPlanetApi import SAFE_URL_PARAMS
@@ -9,18 +11,31 @@ class NewsCollector:
     """
        Takes a list of topics (Strings), and creates a
        list of 4-tuples associated with them.
+       
+       Creates a separate thread for each topic, and parses the
+       news for each topic in parallel. This is much faster than
+       doing it in serial fashion.
     
        returns a list of 4-tuples
     """
     def get_news_for_topics(self, topics):
         print 'getting news for topics: ' + str(topics)
-        newsEntries = []
-        for topic in topics:
-            entry = self.get_news_entry_for_topic(topic[0], topic[1])
-            if entry is not None:
-                newsEntries.append(entry)
+        newsEntries = Queue.Queue()
+        # wrapper to collect return value in a Queue
+        def task_wrapper(*args):
+            newsEntries.put(self.get_news_entry_for_topic(args[0], args[1]))
+        threads = [threading.Thread(target=task_wrapper, args=topic) for topic in topics]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
-        return newsEntries
+        #Iterate through queue, filter out None values, and put into a serializable list
+        newsList = []
+        for e in newsEntries.queue:
+            if e is not None:
+                newsList.append(e)
+        return newsList
 
     """
         Create a news entry for a specific topic.
@@ -50,6 +65,15 @@ class NewsCollector:
 
         return topic, tweet_volume, newsStory[0], newsStory[1]
 
+    """
+        Provided a url, we will open the page,
+        convert the contents into an XML element
+        tree, and pass it to the parse_news_from_xml
+        method.
+        
+        If urllib2#urlopen raises a URLError,
+        we will simple return None
+    """
     def parse_news_story(self, url):
         print 'Starting to parse news link for [' + url + ']'
         newsLink = None
@@ -62,7 +86,17 @@ class NewsCollector:
         except urllib2.URLError:
             return None
 
-
+    """
+        Provided an element tree as the xml of
+        the web page, we will parse the news
+        story from it, and return it as a tuple
+        (title, url)
+        
+        Definitely should not use indexes to find the
+        first item (like I'm currently doing). Need
+        to update to a better method
+    """
+    #TODO upgrade parsing method from indexes to something safer
     def parse_news_from_xml(self, xml):
         if xml is None:
             return None
