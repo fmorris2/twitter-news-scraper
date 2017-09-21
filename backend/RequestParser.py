@@ -46,7 +46,7 @@ class RequestParser:
         #check cache for location entry
         cachedEntry = self.cache[woeid] if woeid in self.cache else None
 
-        #second, check cache
+        #check if cached location entry is valid
         if cachedEntry != None and cachedEntry.isValid():
             return jsonify(newsEntries = cachedEntry.newsEntries)
 
